@@ -122,6 +122,7 @@ def buying_and_stats():
     with c2:
         st.subheader("Buying market")
         st.divider()
+        
         with st.form(key="Buying"):
             bsto = st.selectbox("Choose a stock to buy", st.session_state.tl)
             s = -st.button("Buy")
