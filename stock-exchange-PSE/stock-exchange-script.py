@@ -145,7 +145,7 @@ def buying_and_stats():
 
 
 def return_calc():
-    c1, c2 = st.columns(2, border=True)
+    c1 = st.columns(1, border=True)
     with c1:
         st.subheader("Return calculator")
         st.divider()
@@ -161,7 +161,8 @@ def return_calc():
             f"Return percentage for selected stock: {st.session_state.stock_dict[stock_choice]["Return percentage 1 yr"]}"
         )
         st.divider()
-    with c2:
         ret_output = (st.session_state.stock_dict[stock_choice]["price"] * noShares) * (
-            st.session_state.stock_dict[stock_choice]["Return percentage 1 yr"]
+            st.session_state.stock_dict[stock_choice]["Return percentage 1 yr"] / 100
         )
+        st.metric("Return output", f"₹{ret_output}")
+        st.divider()
