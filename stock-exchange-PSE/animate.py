@@ -12,10 +12,10 @@ class animation:
         if self.anivar == True:
             try:
                 if self.bought == True and self.sold == False:
-                    st.toast(f"You bought {svar}!")
+                    st.toast(f"You bought {self.svar}!")
                     st.balloons()
                 elif self.bought == False and self.sold == True:
-                    st.toast(f"You sold {svar}!")
+                    st.toast(f"You sold {self.svar}!")
                     st.balloons()
             except Exception as e:
-                raise RunTimeError(f"animate.InputError {e}")
+                raise RuntimeError(f"animate.InputError {e}")
