@@ -88,31 +88,31 @@ def buying_and_stats():
         t1, t2, t3, t4, t5, t6, t7 = st.tabs(tl)
         with t1:
             st.line_chart(
-                st.session_state.stock_dict[tl[0]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[0]].get("6 month history"), color="#2f0"
             )
         with t2:
             st.line_chart(
-                st.session_state.stock_dict[tl[1]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[1]].get("6 month history"), color="#2f0"
             )
         with t3:
             st.line_chart(
-                st.session_state.stock_dict[tl[2]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[2]].get("6 month history"), color="#2f0"
             )
         with t4:
             st.line_chart(
-                st.session_state.stock_dict[tl[3]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[3]].get("6 month history"), color="#2f0"
             )
         with t5:
             st.line_chart(
-                st.session_state.stock_dict[tl[4]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[4]].get("6 month history"), color="#2f0"
             )
         with t6:
             st.line_chart(
-                st.session_state.stock_dict[tl[5]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[5]].get("6 month history"), color="#2f0"
             )
         with t7:
             st.line_chart(
-                st.session_state.stock_dict[tl[6]]["6 month history"], color="#2f0"
+                st.session_state.stock_dict[tl[6]].get("6 month history"), color="#2f0"
             )
     with c2:
         st.subheader("Buying market")
