@@ -16,8 +16,8 @@ if "stock_dict" not in st.session_state:
         },
         "HDFCBANK": {
             "name": "HDFC Bank Limited",
-            "price": 20780.45,
-            "return_1yr_pct": -11.75,
+            "Price": 20780.45,
+            "Return Percentage 1 yr": -11.75,
             "history_6mo": [22500.0, 22100.4, 21800.6, 21200.3, 20950.8, 20780.45],
         },
         "TCS": {
@@ -51,11 +51,6 @@ if "stock_dict" not in st.session_state:
             "6 month history": [15800.2, 17200.5, 18500.1, 19900.9, 21000.4, 21846.1],
         },
     }
-    for t in st.session_state.stock_dict.values():
-        adjp = 20000 + random.randint(-10000, 10000)
-        adjpct = +random.randint(-10, 10)
-        t["price"] + adjp
-        t["return_1yr_pct"] + adjpct
 
 if "bought_stocks" not in st.session_state:
     st.session_state.bought_stocks = {}
@@ -161,7 +156,7 @@ def return_calc():
             f"Return percentage for selected stock: {st.session_state.stock_dict[stock_choice]["Return percentage 1 yr"]}"
         )
         st.divider()
-        ret_output = (st.session_state.stock_dict[stock_choice]["price"] * noShares) * (
+        ret_output = (st.session_state.stock_dict[stock_choice]["Price"] * noShares) * (
             st.session_state.stock_dict[stock_choice]["Return percentage 1 yr"] / 100
         )
         st.metric("Return output", f"₹{ret_output}")
