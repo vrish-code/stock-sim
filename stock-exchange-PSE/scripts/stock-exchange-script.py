@@ -4,8 +4,6 @@ import streamlit as st
 import pandas as pd
 import animate as an
 
-with open("stock-exchange-PSE/style.css", encoding="utf-8") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 st.set_page_config(
     page_title="PSE Stock Simulator",
@@ -135,7 +133,10 @@ if "stock_df" not in st.session_state:
     df = pd.DataFrame.from_dict(st.session_state.stock_dict, orient="index")
     df.index.name = "Ticker"
     st.session_state.stock_df = df.reset_index()
-
+if "bankAcc" not in st.session_state:
+    st.session_state.bankAcc = {"Balance": 1000000000.67}
+if "dematAcc" not in st.session_state:
+    st.session_state.dematAcc = {}
 
 if "name" not in st.session_state:
     names = [
@@ -286,7 +287,7 @@ def buying_and_stats():
             if s:
                 st.session_state.bought_stocks.append(
                     {
-                        "Ticker": tl[tl.index(buyStock)],
+                        "Ticker": buyStock,
                         "Name": st.session_state.stock_dict[buyStock]["Name"],
                         "Price (1 share)": st.session_state.stock_dict[buyStock][
                             "Price (1 share)"
@@ -301,11 +302,13 @@ def buying_and_stats():
                     }
                 )
                 for i in range(len(st.session_state.bought_stocks[i])):
-                    st.session_state.bankAccount -= (
+                    st.session_state.bankAcc["Balance"] -= (
                         st.session_state.bought_stocks[i]["Price"]
                         * st.session_state.bought_stocks[i]["No of shares bought"]
                     )
-                    st.session_state.brokerageAccount += (
+                    st.session_state.dematAcc[
+                        st.session_state.bought_stocks[i]["Ticker"]
+                    ] += (
                         st.session_state.bought_stocks[i]["Price"]
                         * st.session_state.bought_stocks[i]["No of shares bought"]
                     )
@@ -537,13 +540,12 @@ def portfolio_and_selling():
                         for y in range(len(st.session_state.bought_stocks))
                     ).append("Total unrealised returns")
                 )
-                for i, t in enumerate(tabS):
+                for i, t in enumeratedsf(tabS):
                     with t:
                         st.metric(
                             f"Unrealised returns for {st.session_state.bought_stocks[i]["Ticker"]}",
                             f"{st.session_state.bought_stocks[i]["Return Percentage 1 yr"]/100*st.session_state.bought_stocks[i]["Price 1 share"]:.2f} INR",
                         )
-
         with c4:
             st.subheader("Selling market")
             st.divider()
@@ -588,6 +590,15 @@ def portfolio_and_selling():
                             "No of shares bought": sellShares,
                         }
                     )
+                    st.session_state.bankAcc["Balance"] += st.session_state.dematAcc[
+                        sellStock
+                    ]
+                    for i in range(len(st.session_state.sold_stocks)):
+                        st.session_state.bankAcc["Balance"] += (
+                            st.session_state.bought_stocks[i]["Return Percentage 1 yr"]
+                            / 100
+                            * st.session_state.bought_stocks[i]["Price 1 share"]
+                        )
                     an.ani(True, False, True, sellStock)
 
     else:
