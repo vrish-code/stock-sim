@@ -124,10 +124,13 @@ if "stock_dict" not in st.session_state:
     }
 
 if "bought_stocks" not in st.session_state:
-    st.session_state.bought_stocks = []
-
+    st.session_state.bought_stocks = {}
+if "bankAcc" not in st.session_state:
+    st.session_state.bankAcc = {"Balance": 100000000 + random.randint(10000, -100000)}
+if "demat" not in st.session_state:
+    st.session_state.dematAcc = {}
 if "sold_stocks" not in st.session_state:
-    st.session_state.sold_stocks = []
+    st.session_state.sold_stocks = {}
 
 if "stock_df" not in st.session_state:
     df = pd.DataFrame.from_dict(st.session_state.stock_dict, orient="index")
@@ -279,22 +282,22 @@ def buying_and_stats():
                 )
 
             if s:
-                st.session_state.bought_stocks.append(
-                    {
-                        "Ticker": buyStock,
-                        "Name": st.session_state.stock_dict[buyStock]["Name"],
-                        "Price (1 share)": st.session_state.stock_dict[buyStock][
-                            "Price (1 share)"
-                        ],
-                        "Return Percentage 1 yr": st.session_state.stock_dict[buyStock][
-                            "Return Percentage 1 yr"
-                        ],
-                        "6 month history": st.session_state.stock_dict[buyStock][
-                            "6 month history"
-                        ],
-                        "No of shares bought": noS,
-                    }
-                )
+                st.session_state.bought_stocks[
+                    st.session_state.stock_dict[buyStock]
+                ] = {
+                    "Name": st.session_state.stock_dict[buyStock]["Name"],
+                    "Price (1 share)": st.session_state.stock_dict[buyStock][
+                        "Price (1 share)"
+                    ],
+                    "Return Percentage 1 yr": st.session_state.stock_dict[buyStock][
+                        "Return Percentage 1 yr"
+                    ],
+                    "6 month history": st.session_state.stock_dict[buyStock][
+                        "6 month history"
+                    ],
+                    "No of shares bought": noS,
+                }
+
                 an.ani(True, True, False, buyStock)
 
     with st.container(border=True):
@@ -377,11 +380,11 @@ def portfolio_and_selling():
         totInv = float(
             sum(
                 st.session_state.bought_stocks[a]["Price (1 share)"]
-                for a in range(len(st.session_state.bought_stocks))
+                for a in st.session_state.bought_stocks
             )
             * sum(
                 st.session_state.bought_stocks[b]["No of shares bought"]
-                for b in range(len(st.session_state.bought_stocks))
+                for b in st.session_state.bought_stocks
             )
         )
 
@@ -401,6 +404,80 @@ def portfolio_and_selling():
         )
         totPL = totRet / 100 * totInv
         totPortVal = totInv + totPL
+        realisedPL = 0.00
+
+        with st.container("Quick data overview"):
+            with st.expander("Total Invested Money"):
+                st.metric("Total investment", f"{totInv:.2f} INR")
+            with st.expander("Total Portfolio Value"):
+                st.metric("Total Portfolio Value", f"{totPortVal:.2f} INR")
+            with st.expander("Total P/L (Unrealised)"):
+                st.metric("Unrealised P/L", f"{totPL:.2f} INR", f"{totRet:.2f}%")
+            with st.expander("Total Realised P/L"):
+                st.metric("Total Realised P/L", f"{realisedPL:.2f} INR")
+            with st.expander("Bank account balance"):
+                st.metric("Bank account", f"{st.session_state.bankAcc} INR")
+            with st.expander("Demat account"):
+                st.metric("Demat account", f"{st.session_state.dematAcc}")
+        c1, c2 = st.columns(2, border=True, gap="large")
+        with c1:
+            st.subheader("Stock overview")
+            st.divider()
+            with st.container(border=True):
+                taBs = st.tabs(list(st.session_state.bought_stocks.keys()))
+
+                for y, t in enumerate(taBs):
+                    with t:
+                        bStockDf = pd.Dataframe(
+                            list(st.session_state.bought_stocks[y].items())
+                        )
+                        st.dataframe(bStockDict, hide_index=True)
+            with st.container(border=True):
+                tAbs = st.tabs(
+                    list(
+                        st.session_state.bought_stocks[x]["Ticker"]
+                        for x in st.session_state.bought_stocks
+                    )
+                )
+
+                for p, t in enumerate(tAbs):
+                    with t:
+                        st.line_chart(
+                            st.session_state.bought_stocks[p]["6 month history"]
+                        )
+        with c2:
+            st.subheader("Selling market")
+            st.divider()
+            with st.container(border=True):
+                sellStock = st.selectbox(list(st.session_state.bought_stocks.keys()))
+                noS = st.number_input(
+                    "Choose how many shares you want to sell",
+                    1,
+                    st.session_state.bought_stocks[sellStock]["No of shares bought"],
+                    1,
+                )
+                sell_conf = st.button("Sell")
+                if sell_conf:
+                    if (
+                        noS
+                        == st.session_state.bought_stocks[sellStock][
+                            "No of shares bought"
+                        ]
+                    ):
+                        st.session_state.sold_stocks[sellStock] = (
+                            st.session_state.bought_stocks[sellStock]
+                        )
+                        del st.session_state.bought_stocks[sellStock]
+                    else:
+                        st.session_state.bought_stocks[sellStock][
+                            "No of shares bought"
+                        ] -= noS
+                        st.session_state.sold_stocks[sellStock] = (
+                            st.session_state.bought_stocks[sellStock]
+                        )
+                        st.session_state.sold_stocks[sellStock][
+                            "No of shares bought"
+                        ] = noS
 
     else:
         st.error("No stocks bought!")
