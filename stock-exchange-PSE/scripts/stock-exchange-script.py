@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import random
 import streamlit as st
 import pandas as pd
-import animate as an
 import requests as r
 
 st.set_page_config(
@@ -127,7 +126,7 @@ if "bought_stocks" not in st.session_state:
     st.session_state.bought_stocks = {}
 if "bankAcc" not in st.session_state:
     st.session_state.bankAcc = {
-        "Balance": 100000000.676767 + random.randint(10000, -100000)
+        "Balance": 100000000.676767 + random.randint(-10000, 100000)
     }
 if "demat" not in st.session_state:
     st.session_state.dematAcc = {}
@@ -284,21 +283,10 @@ def buying_and_stats():
                 )
 
             if s:
-                st.session_state.bought_stocks[
-                    st.session_state.stock_dict[buyStock]
-                ] = {
-                    "Name": st.session_state.stock_dict[buyStock]["Name"],
-                    "Price (1 share)": st.session_state.stock_dict[buyStock][
-                        "Price (1 share)"
-                    ],
-                    "Return Percentage 1 yr": st.session_state.stock_dict[buyStock][
-                        "Return Percentage 1 yr"
-                    ],
-                    "6 month history": st.session_state.stock_dict[buyStock][
-                        "6 month history"
-                    ],
-                    "No of shares bought": noS,
-                }
+                st.session_state.bought_stocks[buyStock] = st.session_state.stock_dict[
+                    buyStock
+                ]
+                st.session_state.bought_stocks[buyStock]["No of shares bought"] = noS
                 st.session_state.demat[buyStock] += (
                     st.session_state.stock_dict[buyStock]["Price (1 share)"]
                     * st.session_state.bought_stocks[buyStock]["No of shares bought"]
@@ -410,7 +398,8 @@ def portfolio_and_selling():
         totRet = totPL / totInv * 100
         totPortVal = totInv + totPL
 
-        with st.container("Quick data overview"):
+        with st.container():
+            st.subheader("Quick data overview")
             with st.expander("Total Invested Money"):
                 st.metric("Total investment", f"{totInv:.2f} INR")
             with st.expander("Total Portfolio Value"):
@@ -426,7 +415,9 @@ def portfolio_and_selling():
                 for t in enumerate(Tabs):
                     for i in st.session_state.demat:
                         with t:
-                            st.metric(f"Total demat holding for {st.session_state.demat[i]}", )
+                            st.metric(
+                                f"Total demat holding for {st.session_state.demat[i]}",
+                            )
         c1, c2 = st.columns(2, border=True, gap="large")
         with c1:
             st.subheader("Stock overview")
@@ -441,11 +432,7 @@ def portfolio_and_selling():
                         )
                         st.dataframe(bStockDict, hide_index=True)
             with st.container(border=True):
-                tAbs = st.tabs(
-                    list(
-                      st.session_state.bought_stocks.keys()
-                    )
-                )
+                tAbs = st.tabs(list(st.session_state.bought_stocks.keys()))
 
                 for p, t in enumerate(tAbs):
                     with t:
@@ -508,10 +495,37 @@ def portfolio_and_selling():
 
 
 def chatbot():
-    API_KEY=st.secrets["CHATBOT_API_KEY"]
+    API_KEY = st.secrets["CHATBOT_API_KEY"]
     with st.container(border=True):
-            prompt=st.text_input("Enter a prompt")
-            send=st.button("Send")
+        prompt = st.chat_input("Enter a prompt")
+        send = st.button("Send")
+    realPrompt = f"Stock dict:{st.session_state.stock_dict}, Bought stocks: {st.session_state.bought_stocks}, Sold stocks: {st.session_state.sold_stocks}, bank account: {st.session_state.bankAcc}, demat account: {st.session_state.demat}, {prompt}"
     with st.container(border=True):
-        
+        with st.chat_message("Stockinator.ai", "🤖"):
+            st.write("How can I help you?")
+        with st.chat_message(st.session_state.name, "🧑‍🦰"):
+            st.write(realPrompt)
+        resp = request.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {st.secrets["CHATBOT_API_KEY"]}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "openrouter/free",
+                "messages": [{"role": "user", "content": realPrompt}],
+            },
+        )
+        with st.chat_message("Stockinator.ai"):
+            st.write(f"{resp.json()[choices][0]["message"]["content"]}")
 
+
+with st.sidebar:
+    st.sidebar.title("Choose")
+    a = st.selectbox("Choice", [1, 2, 3])
+if a == 1:
+    buying_and_stats()
+if a == 2:
+    portfolio_and_selling()
+if a == 3:
+    chatbot()
