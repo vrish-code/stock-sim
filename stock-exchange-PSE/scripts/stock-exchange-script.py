@@ -129,7 +129,7 @@ if "bankAcc" not in st.session_state:
         "Balance": 100000000.676767 + random.randint(-10000, 100000)
     }
 if "demat" not in st.session_state:
-    st.session_state.dematAcc = {}
+    st.session_state.demat = 0.00
 if "sold_stocks" not in st.session_state:
     st.session_state.sold_stocks = {}
 
@@ -137,7 +137,8 @@ if "stock_df" not in st.session_state:
     df = pd.DataFrame.from_dict(st.session_state.stock_dict, orient="index")
     df.index.name = "Ticker"
     st.session_state.stock_df = df.reset_index()
-
+if "realisedPL" not in st.session_state:
+    st.session_state.realisedPL = 0.00
 if "name" not in st.session_state:
     names = [
         "Liam",
@@ -287,9 +288,8 @@ def buying_and_stats():
                     buyStock
                 ]
                 st.session_state.bought_stocks[buyStock]["No of shares bought"] = noS
-                st.session_state.demat[buyStock] += (
-                    st.session_state.stock_dict[buyStock]["Price (1 share)"]
-                    * st.session_state.bought_stocks[buyStock]["No of shares bought"]
+                st.session_state.demat += (
+                    st.session_state.stock_dict[buyStock]["Price (1 share)"] * noS
                 ) * (
                     st.session_state.stock_dict[buyStock]["Return Percentage 1 yr"]
                     / 100
@@ -301,8 +301,6 @@ def buying_and_stats():
                     buyStock
                 ]["Price (1 share)"]
                 * st.session_state.bought_stocks[buyStock]["No of shares bought"]
-
-                an.ani(True, True, False, buyStock)
 
     with st.container(border=True):
         t1, t2, t3, t4, t5, t6, t7 = st.tabs(tl)
@@ -407,87 +405,31 @@ def portfolio_and_selling():
             with st.expander("Total P/L (Unrealised)"):
                 st.metric("Unrealised P/L", f"{totPL:.2f} INR", f"{totRet:.2f}%")
             with st.expander("Total Realised P/L"):
-                st.metric("Total Realised P/L", f"{realisedPL:.2f} INR")
+                st.metric(
+                    "Total Realised P/L", f"{st.session_state.realisedPL:.2f} INR"
+                )
             with st.expander("Bank account balance"):
                 st.metric("Bank account", f"{st.session_state.bankAcc["Balance"]} INR")
             with st.expander("Demat account"):
-                Tabs = st.tabs(list(st.session_state.bought_stocks.keys()))
-                for t in enumerate(Tabs):
-                    for i in st.session_state.demat:
-                        with t:
-                            st.metric(
-                                f"Total demat holding for {st.session_state.demat[i]}",
-                            )
+                st.metric("Total demat holdings", st.session_state.demat)
         c1, c2 = st.columns(2, border=True, gap="large")
         with c1:
             st.subheader("Stock overview")
             st.divider()
             with st.container(border=True):
-                taBs = st.tabs(list(st.session_state.bought_stocks.keys()))
-
-                for y, t in enumerate(taBs):
-                    with t:
-                        bStockDf = pd.Dataframe(
-                            list(st.session_state.bought_stocks[y].items())
+                sList = list(st.session_state.bought_stocks.keys())
+                for i in st.session_state.bought_stocks:
+                    with st.container(border=True):
+                        st.subheader(sList[sList.index(i)])
+                        bSDf = pd.DataFrame(
+                            list(st.session_state.bought_stocks[i].items())
                         )
-                        st.dataframe(bStockDict, hide_index=True)
+                        st.dataframe(bSDf, hide_index=True)
             with st.container(border=True):
-                tAbs = st.tabs(list(st.session_state.bought_stocks.keys()))
-
-                for p, t in enumerate(tAbs):
-                    with t:
+                for i in st.session_state.bought_stocks:
+                    with st.container(border=True):
                         st.line_chart(
-                            st.session_state.bought_stocks[p]["6 month history"]
-                        )
-        with c2:
-            st.subheader("Selling market")
-            st.divider()
-            with st.container(border=True):
-                sellStock = st.selectbox(list(st.session_state.bought_stocks.keys()))
-                noS = st.number_input(
-                    "Choose how many shares you want to sell",
-                    1,
-                    st.session_state.bought_stocks[sellStock]["No of shares bought"],
-                    1,
-                )
-                sell_conf = st.button("Sell")
-                if sell_conf:
-                    if (
-                        noS
-                        == st.session_state.bought_stocks[sellStock][
-                            "No of shares bought"
-                        ]
-                    ):
-                        st.session_state.sold_stocks[sellStock] = (
-                            st.session_state.bought_stocks[sellStock]
-                        )
-                        st.session_state.bankAcc["Balance"] += st.session_state.demat[
-                            sellStock
-                        ]
-                        st.session_state.dematAcc[sellStock] = 0.000
-                        del st.session_state.bought_stocks[sellStock]
-                    else:
-                        st.session_state.bought_stocks[sellStock][
-                            "No of shares bought"
-                        ] -= noS
-                        st.session_state.sold_stocks[sellStock] = (
-                            st.session_state.bought_stocks[sellStock]
-                        )
-                        st.session_state.sold_stocks[sellStock][
-                            "No of shares bought"
-                        ] = noS
-                        st.session_state.bankAcc["Balance"] += (
-                            st.session_state.bought_stocks[sellStock]["Price"]
-                            * noS
-                            * (
-                                st.session_state.bought_stocks[sellStock][
-                                    "Return percentage 1 yr"
-                                ]
-                                / 100
-                            )
-                        )
-                        st.session_state.demat[sellStock] -= (
-                            st.session_state.bought_stocks[sellStock]["Price"] * noS
+                            st.session_state.bought_stocks[i]["6 month history"]
                         )
 
     else:
@@ -498,17 +440,16 @@ def chatbot():
     API_KEY = st.secrets["CHATBOT_API_KEY"]
     with st.container(border=True):
         prompt = st.chat_input("Enter a prompt")
-        send = st.button("Send")
     realPrompt = f"Stock dict:{st.session_state.stock_dict}, Bought stocks: {st.session_state.bought_stocks}, Sold stocks: {st.session_state.sold_stocks}, bank account: {st.session_state.bankAcc}, demat account: {st.session_state.demat}, {prompt}"
     with st.container(border=True):
-        with st.chat_message("Stockinator.ai", "🤖"):
+        with st.chat_message("Stockinator.ai"):
             st.write("How can I help you?")
-        with st.chat_message(st.session_state.name, "🧑‍🦰"):
-            st.write(realPrompt)
-        resp = request.post(
+        with st.chat_message(st.session_state.name):
+            st.write(prompt)
+        resp = r.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {st.secrets["CHATBOT_API_KEY"]}",
+                "Authorization": f"Bearer {st.secrets['CHATBOT_API_KEY']}",
                 "Content-Type": "application/json",
             },
             json={
@@ -517,7 +458,7 @@ def chatbot():
             },
         )
         with st.chat_message("Stockinator.ai"):
-            st.write(f"{resp.json()[choices][0]["message"]["content"]}")
+            st.write(f"{resp.json()['choices'][0]['message']['content']}")
 
 
 with st.sidebar:
