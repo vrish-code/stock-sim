@@ -299,10 +299,10 @@ def buying_and_stats():
                     st.session_state.stock_dict[buyStock]["Price (1 share)"]
                     * st.session_state.bought_stocks[buyStock]["No of shares bought"]
                 )
-                st.session_state.bankAcc["Balance"] -= st.session_state.stock_dict[
-                    buyStock
-                ]["Price (1 share)"]
-                * st.session_state.bought_stocks[buyStock]["No of shares bought"]
+                st.session_state.bankAcc["Balance"] -= (
+                    st.session_state.stock_dict[buyStock]["Price (1 share)"]
+                    * st.session_state.bought_stocks[buyStock]["No of shares bought"]
+                )
 
     with st.container(border=True):
         t1, t2, t3, t4, t5, t6, t7 = st.tabs(tl)
