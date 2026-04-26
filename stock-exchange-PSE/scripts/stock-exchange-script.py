@@ -46,7 +46,6 @@ if "userDict" not in st.session_state:
         "Sold stocks": {},
         "Bank account": {"Balance": 100000000.676767 + random.randint(-10000, 100000)},
         "Demat": {},
-        "realisedPL": 0.00,
         "Name": random.choice(
             [
                 "Liam",
@@ -299,7 +298,7 @@ def buying_and_stats():
                 st.divider()
 
 
-def return_calc():
+def returnCalc():
     st.title("Calculate your returns—on point!")
     with st.container(border=True):
         st.subheader("Return calculator")
@@ -320,13 +319,16 @@ def return_calc():
         st.divider()
 
         st.write(
-            f"Return percentage (1 yr) for selected stock: {st.session_state.userDict[stock_choice]['Return Percentage 1 yr']}"
+            f"Return percentage (1 yr) for selected stock: {st.session_state.availableStocks[stock_choice]['Return Percentage 1 yr']}"
         )
         st.divider()
 
         ret_output = (
-            st.session_state.userDict[stock_choice]["Price (1 share)"] * noShares
-        ) * (st.session_state.userDict[stock_choice]["Return Percentage 1 yr"] / 100)
+            st.session_state.availableStocks[stock_choice]["Price (1 share)"] * noShares
+        ) * (
+            st.session_state.availableStocks[stock_choice]["Return Percentage 1 yr"]
+            / 100
+        )
 
         st.metric("Return output", f"₹{ret_output}")
         st.divider()
@@ -335,29 +337,35 @@ def return_calc():
 def chatbot():
     with st.container(border=True):
         prompt = st.chat_input("Enter a prompt")
-    realPrompt = f"Stocks available:{st.session_state.availableStocks}, Bought stocks: {st.session_state.userDict["Bought stocks"]}, Sold stocks: {st.session_state.userDict["Sold stocks"]}, bank account: {st.session_state.userDict["Bank account"]}, demat account: {st.session_state.userDict["Demat"]}, {prompt}"
+    realPrompt = f"""Stocks available:{st.session_state.availableStocks}, 
+    Bought stocks: {st.session_state.userDict["Bought stocks"]}, 
+    Sold stocks: {st.session_state.userDict["Sold stocks"]}, 
+    Bank account: {st.session_state.userDict["Bank account"]}, 
+    Demat account: {st.session_state.userDict["Demat"]}, {prompt}"""
     with st.container(border=True):
         with st.chat_message("Stockinator.ai", avatar="🤖"):
             st.write("How can I help you?")
-        with st.chat_message(st.session_state.userDict["Name"], avatar="👤"):
-            st.write(prompt)
-        resp = r.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {apikeys["api-key-chatbot"]}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": "openrouter/free",
-                "messages": [{"role": "user", "content": realPrompt}],
-            },
-        )
-        if resp.status_code == 200:
-            with st.chat_message("Stockinator.ai"):
-                st.write(f"{resp.json()['choices'][0]['message']['content']}")
+        if prompt:
+            with st.chat_message(st.session_state.userDict["Name"], avatar="👤"):
+                st.write(prompt)
+            resp = r.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {apikeys["api-key-chatbot"]}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "openrouter/free",
+                    "messages": [{"role": "user", "content": realPrompt}],
+                },
+            )
+            if resp.status_code == 200:
+                with st.chat_message("Stockinator.ai"):
+                    st.write(f"{resp.json()['choices'][0]['message']['content']}")
 
 
 def portfolio_and_selling():
+
     st.header("Portfolio")
     st.divider()
     st.subheader(f"Welcome, {st.session_state.userDict["Name"]}!")
@@ -387,11 +395,7 @@ def portfolio_and_selling():
                 st.metric("Total Portfolio Value", f"{totPortVal:.2f} INR")
             with st.expander("Total P/L (Unrealised)"):
                 st.metric("Unrealised P/L", f"{totPL:.2f} INR", f"{totRet:.2f}%")
-            with st.expander("Total Realised P/L"):
-                st.metric(
-                    "Total Realised P/L",
-                    f"{st.session_state.userDict["realisedPL"]:.2f} INR",
-                )
+
             with st.expander("Bank account balance"):
                 st.metric(
                     f"Bank account balance for {st.session_state.userDict["Name"]}",
@@ -476,7 +480,8 @@ def portfolio_and_selling():
                         st.session_state.userDict["Bank account"][
                             "Balance"
                         ] += st.session_state.userDict["Demat"][sellStock]
-                        st.success(f"You sold {sellStock}!")
+
+                        st.rerun()
                     elif (
                         noS
                         != st.session_state.userDict["Bought stocks"][sellStock][
@@ -530,13 +535,15 @@ def portfolio_and_selling():
                             )
                             - noS
                         )
+
+                        st.rerun()
             st.divider()
 
     else:
         st.error("No stocks bought!")
 
 
-def instructions():
+def inStructions():
     for i in range(len(instructions)):
         st.warning(instructions[i])
         st.divider()
@@ -547,10 +554,14 @@ def instructions():
 
 with st.sidebar:
     st.sidebar.title("Choose")
-    a = st.selectbox("Choice", [1, 2, 3])
+    a = st.selectbox("Choice", [1, 2, 3, 4, 5])
 if a == 1:
     buying_and_stats()
 if a == 2:
     portfolio_and_selling()
 if a == 3:
     chatbot()
+if a == 4:
+    returnCalc()
+if a == 5:
+    inStructions()
