@@ -353,7 +353,7 @@ def chatbot():
     a simulator. Don't think the user is actually trading stocks."""
     with st.container(border=True):
         with st.chat_message("Stockinator.ai", avatar="🤖"):
-            st.write("How can I help you?")
+            st.write(f"How can I help you {st.session_state.userDict["Name"]}?")
         if prompt:
             with st.chat_message(st.session_state.userDict["Name"], avatar="👤"):
                 st.write(prompt)
