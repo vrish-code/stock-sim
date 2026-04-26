@@ -349,7 +349,8 @@ def chatbot():
         if prompt:
             with st.chat_message(st.session_state.userDict["Name"], avatar="👤"):
                 st.write(prompt)
-            resp = r.post(
+            with st.spinner("Stockinator.ai is thinking...):
+             resp = r.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
                     "Authorization": f"Bearer {st.secrets["apiKeyChatbot"]}",
@@ -360,7 +361,7 @@ def chatbot():
                     "messages": [{"role": "user", "content": realPrompt}],
                 },
             )
-            if resp.status_code == 200:
+             if resp.status_code == 200:
                 with st.chat_message("Stockinator.ai", avatar="🤖"):
                     st.write(f"{resp.json()['choices'][0]['message']['content']}")
 
