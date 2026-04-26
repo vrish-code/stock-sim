@@ -29,9 +29,6 @@ plt.rcParams.update(
     }
 )
 
-with open(r"C:\Users\karth\OneDrive\Desktop\apikey.json", "r", encoding="utf-8") as f:
-    apikeys = json.load(f)
-
 
 instructions = [
     "Do not click on the same stock in buy or sell twice.",
@@ -355,7 +352,7 @@ def chatbot():
             resp = r.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
-                    "Authorization": f"Bearer {apikeys["api-key-chatbot"]}",
+                    "Authorization": f"Bearer {st.secrets["apiKeyChatbot"]}",
                     "Content-Type": "application/json",
                 },
                 json={
