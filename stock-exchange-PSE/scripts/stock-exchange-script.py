@@ -124,6 +124,7 @@ if "stock_df" not in st.session_state:
 
 def selectNameAge():
     st.empty()
+    selectNameAge.has_run = True
     with st.container(border=True):
         name = st.text_input("Enter your name")
         age = st.slider(
@@ -517,27 +518,30 @@ def inStructions():
     )
 
 
-selectNameAge()
-with st.sidebar:
-    choiceList = [
-        "View stock stats and buy some stocks",
-        "Calculate the return percentage of stocks",
-        "View your portfolio and sell stocks",
-        "Use the chatbot",
-        "Read the instruction manual",
-    ]
-    st.sidebar.title("Navigate between pages using the sidebar's dropdown menu")
-    a = st.selectbox(
-        "Choice",
-        choiceList,
-    )
-if a == choiceList[0]:
-    buyingAndStats()
-if a == choiceList[2]:
-    portfolioAndSelling()
-if a == choiceList[3]:
-    chatbot()
-if a == choiceList[1]:
-    returnCalc()
-if a == choiceList[4]:
-    inStructions()
+selectNameAge.has_run = False
+if selectNameAge.has_run == False:
+    selectNameAge()
+if selectNameAge.has_run == True:
+    with st.sidebar:
+        choiceList = [
+            "View stock stats and buy some stocks",
+            "Calculate the return percentage of stocks",
+            "View your portfolio and sell stocks",
+            "Use the chatbot",
+            "Read the instruction manual",
+        ]
+        st.sidebar.title("Navigate between pages using the sidebar's dropdown menu")
+        a = st.selectbox(
+            "Choice",
+            choiceList,
+        )
+    if a == choiceList[0]:
+        buyingAndStats()
+    if a == choiceList[2]:
+        portfolioAndSelling()
+    if a == choiceList[3]:
+        chatbot()
+    if a == choiceList[1]:
+        returnCalc()
+    if a == choiceList[4]:
+        inStructions()
