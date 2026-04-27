@@ -129,9 +129,10 @@ def selectNameAge():
         age = st.slider(
             label="Select your age", min_value=6, max_value=100, step=1, value=6
         )
-    st.session_state.userDict["Age"] = age
-    st.session_state.userDict["Name"] = name
-    st.success("Name and age updated!")
+    if name and age:
+        st.session_state.userDict["Age"] = age
+        st.session_state.userDict["Name"] = name
+        st.success("Name and age updated!")
 
 
 def buyingAndStats():
