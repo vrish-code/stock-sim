@@ -39,15 +39,75 @@ instructions = [
     "Use the dropdowns for selecting stocks.",
     "Use the expanders for viewing your portfolio data at a glance.",
 ]
-
+if "gender" not in st.session_state:
+    st.session_state.gender = random.choice(["Boy", "Girl"])
 if "userDict" not in st.session_state:
     st.session_state.userDict = {
         "Bought stocks": {},
         "Sold stocks": {},
         "Bank account": {"Balance": 100000000.676767 + random.randint(-10000, 100000)},
         "Demat": {},
-        "Age": 0,
-        "Name": "",
+        "Name": (
+            random.choice(
+                [
+                    "Liam",
+                    "Noah",
+                    "Oliver",
+                    "James",
+                    "Elijah",
+                    "William",
+                    "Henry",
+                    "Lucas",
+                    "Benjamin",
+                    "Theodore",
+                    "Mateo",
+                    "Levi",
+                    "Sebastian",
+                    "Daniel",
+                    "Jack",
+                    "Wyatt",
+                    "Alexander",
+                    "Owen",
+                    "Asher",
+                    "Samuel",
+                    "Ethan",
+                    "Leo",
+                    "Jackson",
+                    "Mason",
+                    "Ezra",
+                ]
+            )
+            if st.session_state.gender == "Boy"
+            else random.choice(
+                [
+                    "Olivia",
+                    "Emma",
+                    "Charlotte",
+                    "Amelia",
+                    "Sophia",
+                    "Isabella",
+                    "Ava",
+                    "Mia",
+                    "Evelyn",
+                    "Luna",
+                    "Harper",
+                    "Sofia",
+                    "Scarlett",
+                    "Elizabeth",
+                    "Eleanor",
+                    "Chloe",
+                    "Layla",
+                    "Mila",
+                    "Alice",
+                    "Hazel",
+                    "Claire",
+                    "Ivy",
+                    "Aurora",
+                    "Penelope",
+                    "Elena",
+                ]
+            )
+        ),
     }
 
 if "availableStocks" not in st.session_state:
@@ -122,21 +182,7 @@ if "stock_df" not in st.session_state:
     )
 
 
-def selectNameAge():
-    ph = st.empty()
-    with ph:
-        with st.container(border=True):
-            name = st.text_input("Enter your name")
-            age = st.slider(
-                label="Select your age", min_value=6, max_value=100, step=1, value=6
-            )
-        if name and age:
-            st.session_state.userDict["Age"] = age
-            st.session_state.userDict["Name"] = name
-            st.success("Name and age updated!")
-
-
-def buyingAndStats():
+def buying_and_stats():
     st.title("View available stocks!")
     st.divider()
     st.subheader(f"Welcome, {st.session_state.userDict["Name"]}! ")
@@ -328,7 +374,7 @@ def chatbot():
                         st.write(f"{resp.json()['choices'][0]['message']['content']}")
 
 
-def portfolioAndSelling():
+def portfolio_and_selling():
 
     st.header("Portfolio")
     st.divider()
@@ -532,9 +578,9 @@ with st.sidebar:
         choiceList,
     )
 if a == choiceList[0]:
-    buyingAndStats()
+    buying_and_stats()
 if a == choiceList[2]:
-    portfolioAndSelling()
+    portfolio_and_selling()
 if a == choiceList[3]:
     chatbot()
 if a == choiceList[1]:
