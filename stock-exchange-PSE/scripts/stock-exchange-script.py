@@ -304,6 +304,18 @@ def buying_and_stats():
                 )
                 st.success(f"You bought {buyStock}!")
                 st.divider()
+    st.divider()
+    with st.container(border=True):
+        tabs = list(st.session_state.availableStocks.keys())
+        for t in tabs:
+            for i in st.session_state.availableStocks:
+                with t:
+                    st.line_chart(
+                        st.session_state.availableStocks[i]["6 month history"],
+                        x=f"{st.session_state.availableStocks[i].keys()} Price Trend",
+                        y="Amount (INR)",
+                        color="#0ffff6",
+                    )
 
 
 def returnCalc():
