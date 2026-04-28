@@ -306,7 +306,7 @@ def buying_and_stats():
                 st.divider()
     st.divider()
     with st.container(border=True):
-        tabs = list(st.session_state.availableStocks.keys())
+        tabs = st.tabs(list(st.session_state.availableStocks.keys()))
         for t in tabs:
             for i in st.session_state.availableStocks:
                 with t:
