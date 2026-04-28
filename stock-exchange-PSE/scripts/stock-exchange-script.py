@@ -307,13 +307,14 @@ def buyingAndStats():
     st.divider()
     tickerList = list(st.session_state.availableStocks.keys())
     for i, t in enumerate(st.tabs(tickerList)):
-        with t:
-            st.line_chart(
-                st.session_state.availableStocks[i]["6 month history"],
-                x=tickerList[i],
-                y="6 month price history",
-                color="#10a7c5",
-            )
+        for j in st.session_state.availableStocks:
+            with t:
+                st.line_chart(
+                    st.session_state.availableStocks[j]["6 month history"],
+                    x=tickerList[i],
+                    y="6 month price history",
+                    color="#10a7c5",
+                )
 
 
 def returnCalc():
