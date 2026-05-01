@@ -711,7 +711,7 @@ def bankManagement():
                 label="How much do you want to withdraw",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
-                step=1,
+                step=1.0,
             )
         if withdrawalName and pin and amountWithdrawn:
             if pin == st.session_state.userDict["PIN"]:
@@ -737,7 +737,7 @@ def bankManagement():
                 label="How much do you want to send",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
-                step=1,
+                step=1.0,
             )
             receiver = st.selectbox("Who do you want to send the money to?", names)
             if transactionName and pinTra and amountSent:
@@ -767,7 +767,7 @@ def bankManagement():
                 label="How much do you want to deposit",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
-                step=1,
+                step=1.0,
             )
 
         if depositName and pin and amountDeposited:
