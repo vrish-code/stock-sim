@@ -594,6 +594,7 @@ def inStructions():
 
 
 def bankManagement():
+
     names = [
         "Liam",
         "Noah",
@@ -697,6 +698,8 @@ def bankManagement():
         def celebrate(self):
             st.success("Transaction successful!")
 
+    st.subheader("Manage your bank account")
+    st.badge("New feature!", icon="🆕", color="green")
     with st.container(border=True):
         c1, c2, c3 = st.columns(3, border=True)
     with c1:
