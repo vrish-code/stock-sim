@@ -809,40 +809,52 @@ def bankManagement():
                     )
                 st.divider()
             with c2:
-                with st.expander("Total withdrawn"):
-                    st.metric(
-                        "Total withdrawn",
-                        f"{st.session_state.userDict['Total withdrawn']} INR",
+                if (
+                    len(st.session_state.userDict["Transactions"]) != 0
+                    and st.session_state.userDict["Withdrawals"] != 0
+                    and st.session_state.userDict["Deposits"] != 0
+                ):
+                    with st.expander("Total withdrawn"):
+                        st.metric(
+                            "Total withdrawn",
+                            f"{st.session_state.userDict['Total withdrawn']} INR",
+                        )
+                    st.divider()
+                    with st.expander("Total deposited"):
+                        st.metric(
+                            "Total deposited",
+                            f"{st.session_state.userDict['Total deposited']} INR",
+                        )
+                    st.divider()
+                    with st.expander("Total sent"):
+                        st.metric(
+                            "Total sent",
+                            f"{st.session_state.userDict['Total sent']} INR",
+                        )
+                    st.divider()
+        if (
+            len(st.session_state.userDict["Transactions"]) != 0
+            and st.session_state.userDict["Withdrawals"] != 0
+            and st.session_state.userDict["Deposits"] != 0
+        ):
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3, border=True)
+                with c1:
+                    st.subheader("Withdrawals")
+                    st.divider()
+                    withdrawDf = pd.DataFrame(st.session_state.userDict["Withdrawals"])
+                    st.dataframe(withdrawDf, hide_index=True)
+                    st.divider()
+                with c2:
+                    transactionsDf = pd.DataFrame(
+                        st.session_state.userDict["Transactions"]
                     )
-                st.divider()
-                with st.expander("Total deposited"):
-                    st.metric(
-                        "Total deposited",
-                        f"{st.session_state.userDict['Total deposited']} INR",
-                    )
-                st.divider()
-                with st.expander("Total sent"):
-                    st.metric(
-                        "Total sent",
-                        f"{st.session_state.userDict['Total sent']} INR",
-                    )
-                st.divider()
-        with st.container(border=True):
-            c1, c2, c3 = st.columns(3, border=True)
-            with c1:
-                st.subheader("Withdrawals")
-                st.divider()
-                withdrawDf = pd.DataFrame(st.session_state.userDict["Withdrawals"])
-                st.dataframe(withdrawDf, hide_index=True)
-                st.divider()
-            with c1:
-                transactionsDf = pd.DataFrame(st.session_state.userDict["Transactions"])
-                st.dataframe(transactionsDf, hide_index=True)
-                st.divider()
-            with c1:
-                depositDf = pd.DataFrame(st.session_state.userDict["Deposits"])
-                st.dataframe(depositDf, hide_index=True)
-                st.divider()
+                    st.dataframe(transactionsDf, hide_index=True)
+                    st.divider()
+                with c3:
+                    depositDf = pd.DataFrame(st.session_state.userDict["Deposits"])
+                    st.dataframe(depositDf, hide_index=True)
+                    st.divider()
 
 
 with st.sidebar:
