@@ -55,7 +55,10 @@ if "userDict" not in st.session_state:
         "Withdrawals": [],
         "Deposits": [],
         "Transactions": [],
-        "PIN": random.randint(1000, 1000000),
+        "Total withdrawn": 0,
+        "Total deposited": 0,
+        "Total sent": 0,
+        "PIN": 106578,
         "Demat": {},
         "Name": (
             random.choice(
@@ -666,11 +669,8 @@ def chatbot():
     with st.container(border=True):
         prompt = st.chat_input("Enter a prompt")
     realPrompt = f"""Stocks available:{st.session_state.availableStocks}, 
-    Bought stocks: {st.session_state.userDict["Bought stocks"]}, 
-    Sold stocks: {st.session_state.userDict["Sold stocks"]}, 
-    Bank account: {st.session_state.userDict["Bank account"]}, 
-    Demat account: {st.session_state.userDict["Demat"]}, {prompt}, do not provide any inappropriate misinformation. The data is just for
-    a simulator. Don't think the user is actually trading stocks."""
+    User data:{st.session_state.userDict}, {prompt}, do not provide any inappropriate misinformation. The data is just for
+    a simulator. Don't think the user is actually trading stocks. Separate the stocks from the banking data and don't show the separation in the answer. The bank balance is common for both categories. If the user asks regarding stocks, reply regarding stocks and bank balance, if the user asks regarding the banking data, reply accordingly with regards to the bank balance."""
     with st.container(border=True):
         with st.chat_message("Stockinator.ai", avatar="🤖"):
             st.write(f"How can I help you {st.session_state.userDict["Name"]}?")
@@ -994,7 +994,8 @@ def bankManagement():
         def celebrate(self):
             st.success("Transaction successful!")
 
-    c1, c2, c3 = st.columns(3, border=True)
+    with st.container(border=True):
+        c1, c2, c3 = st.columns(3, border=True)
     with c1:
         st.subheader("Withdrawals here!")
         st.divider()
@@ -1014,6 +1015,7 @@ def bankManagement():
                 )
                 st.session_state.userDict["Withdrawals"].append(withdrawal.dict())
                 st.session_state.userDict["No of withdrawals"] += 1
+                st.session_state.userDict["Total withdrawn"] += amountWithdrawn
                 st.session_state.userDict["Bank account balance"] -= amountWithdrawn
                 withdrawal.celebrate()
             else:
@@ -1032,7 +1034,7 @@ def bankManagement():
             )
             receiver = st.selectbox("Who do you want to send the money to?", names)
             if transactionName and pinTra and amountSent:
-                if pin == st.session_state.userDict["PIN"]:
+                if pinTra == st.session_state.userDict["PIN"]:
                     withdrawal = transaction(
                         withdrawalName,
                         amountWithdrawn,
@@ -1041,6 +1043,7 @@ def bankManagement():
                     )
                     st.session_state.userDict["Transactions"].append(transaction.dict())
                     st.session_state.userDict["Bank account balance"] -= amountSent
+                    st.session_state.userDict["Total sent"] += amountSent
                     st.session_state.userDict["No of transactions"] += 1
                     withdrawal.celebrate()
                 else:
@@ -1049,25 +1052,90 @@ def bankManagement():
         st.subheader("Deposits here!")
         st.divider()
         with st.container(border=True):
-            DepositName = st.text_input("Enter the name of your deposit")
-            pin = int(st.text_input("Enter your PIN", type="password"))
+            depositName = st.text_input("Enter the name of your deposit")
+            pinDep = int(st.text_input("Enter your PIN", type="password"))
             amountDeposited = st.slider(
                 label="How much do you want to deposit",
                 min=1.00,
                 max=st.session_state.userDict["Bank account balance"],
                 step=1,
             )
-        if withdrawalName and pin and amountWithdrawn:
-            if pin == st.session_state.userDict["PIN"]:
+
+        if depositName and pin and amountDeposited:
+            if pinDep == st.session_state.userDict["PIN"]:
                 dep = deposit(
-                    DepositName, amountDeposited, random.randint(1000, 1000000000)
+                    depositName, amountDeposited, random.randint(1000, 1000000000)
                 )
                 st.session_state.userDict["Deposits"].append(dep.dict())
                 st.session_state.userDict["Bank account balance"] += amountDeposited
+                st.session_state.userDict["Total deposited"] += amountDeposited
                 st.session_state.userDict["No of deposits"] += 1
                 dep.celebrate()
             else:
                 st.error("Enter a new PIN. The submitted PIN is wrong.")
+    with st.container(border=True):
+        with st.container(border=True):
+            c1, c2 = st.columns(2, border=True)
+            with c1:
+                with st.expander("Bank account balance"):
+                    st.metric(
+                        "Bank account balance",
+                        f"{st.session_state.userDict["Bank account balance"]} INR",
+                    )
+                st.divider()
+                with st.expander("No of deposits"):
+                    st.metric(
+                        "No of deposits",
+                        f"{st.session_state.userDict["No of deposits"]}",
+                    )
+                st.divider()
+                with st.expander("No of withdrawals"):
+                    st.metric(
+                        "No of withdrawals",
+                        f"{st.session_state.userDict["No of withdrawals"]}",
+                    )
+                st.divider()
+                with st.expander("No of transactions"):
+                    st.metric(
+                        "No of transactions",
+                        f"{st.session_state.userDict["No of transactions"]}",
+                    )
+                st.divider()
+            with c2:
+                with st.expander("Total withdrawn"):
+                    st.metric(
+                        "Total withdrawn",
+                        f"{st.session_state.userDict["Total withdrawn"]} INR",
+                    )
+                st.divider()
+                with st.expander("Total deposited"):
+                    st.metric(
+                        "Total deposited",
+                        f"{st.session_state.userDict["Total deposited"]} INR",
+                    )
+                st.divider()
+                with st.expander("Total sent"):
+                    st.metric(
+                        "Total sent",
+                        f"{st.session_state.userDict["Total sent"]} INR",
+                    )
+                st.divider()
+        with st.container(border=True):
+            c1, c2, c3 = st.columns(3, border=True)
+            with c1:
+                st.subheader("Withdrawals")
+                st.divider()
+                withdrawDf = pd.DataFrame(st.session_state.userDict["Withdrawals"])
+                st.dataframe(withdrawDf, hide_index=True)
+                st.divider()
+            with c1:
+                transactionsDf = pd.DataFrame(st.session_state.userDict["Transactions"])
+                st.dataframe(transactionsDf, hide_index=True)
+                st.divider()
+            with c1:
+                depositDf = pd.DataFrame(st.session_state.userDict["Deposits"])
+                st.dataframe(depositDf, hide_index=True)
+                st.divider()
 
 
 with st.sidebar:
