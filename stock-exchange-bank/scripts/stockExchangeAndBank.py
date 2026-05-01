@@ -707,7 +707,7 @@ def bankManagement():
         with st.container(border=True):
             withdrawalName = st.text_input("Enter the name of your withdrawal")
             pin = st.text_input("Enter your PIN", type="password")
-            amountWithdrawn = st.slider(
+            amountWithdrawn = st.number_input(
                 label="How much do you want to withdraw",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
@@ -733,7 +733,7 @@ def bankManagement():
         with st.container(border=True):
             transactionName = st.text_input("Enter the name of your withdrawal")
             pinTra = st.text_input("Enter your PIN", type="password")
-            amountSent = st.slider(
+            amountSent = st.number_input(
                 label="How much do you want to send",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
@@ -763,7 +763,7 @@ def bankManagement():
         with st.container(border=True):
             depositName = st.text_input("Enter the name of your deposit")
             pinDep = st.text_input("Enter your PIN", type="password")
-            amountDeposited = st.slider(
+            amountDeposited = st.number_input(
                 label="How much do you want to deposit",
                 min_value=1.00,
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
