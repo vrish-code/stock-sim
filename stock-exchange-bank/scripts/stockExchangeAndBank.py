@@ -231,7 +231,7 @@ def buyingAndStats():
 
             st.pyplot(f)
             st.divider()
-            st.caption("All prices in INR")
+            st.info("All prices in INR")
             st.divider()
 
         with c2:
@@ -274,7 +274,7 @@ def buyingAndStats():
 
             st.pyplot(g)
             st.divider()
-            st.caption("All returns in INR")
+            st.info("All returns in INR")
             st.divider()
 
             with st.container(border=True):
@@ -368,6 +368,9 @@ def returnCalc():
 
 
 def chatbot():
+    st.subheader("Chatbot")
+    st.divider()
+    st.badge("Futuristic", icon="🤖", color="blue")
     with st.container(border=True):
         prompt = st.chat_input("Enter a prompt")
     realPrompt = f"""Stocks available:{st.session_state.availableStocks}, 
@@ -472,7 +475,7 @@ def portfolioAndSelling():
                     with st.container(border=True):
                         for i in st.session_state.userDict["Bought stocks"]:
                             with st.container(border=True):
-                                st.caption(
+                                st.info(
                                     f"6 month history for {st.session_state.userDict["Bought stocks"][i][
                                     "6 month history"
                                 ]}"
@@ -587,7 +590,7 @@ def inStructions():
             st.write(f"Your PIN is {st.session_state.userDict["PIN"]}")
             t.sleep(5)
         ph.empty()
-    st.caption(
+    st.info(
         "This game is purely made for educational purposes. No misuse cases are attributed to the developer."
     )
 
@@ -762,8 +765,8 @@ def bankManagement():
             pinDep = st.text_input("Enter your PIN", type="password")
             amountDeposited = st.slider(
                 label="How much do you want to deposit",
-                min=1.00,
-                max=st.session_state.userDict["Bank account"]["Balance"],
+                min_value=1.00,
+                max_value=st.session_state.userDict["Bank account"]["Balance"],
                 step=1,
             )
 
