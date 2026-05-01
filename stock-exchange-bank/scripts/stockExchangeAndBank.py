@@ -757,7 +757,7 @@ def bankManagement():
                     )
                     st.session_state.userDict["Bank account"]["Balance"] -= amountSent
                     st.session_state.userDict["Bank"]["Total sent"] += amountSent
-                    st.session_state.userDict["No of transactions"] += 1
+                    st.session_state.userDict["Bank"]["No of transactions"] += 1
                     withdrawal.celebrate()
                 else:
                     st.error("Enter a new PIN. The submitted PIN is wrong.")
