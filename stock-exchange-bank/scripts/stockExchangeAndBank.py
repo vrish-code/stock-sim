@@ -49,17 +49,15 @@ if "userDict" not in st.session_state:
         "Bank account": {
             "Balance": 100000000.676767 + random.randint(100, 1000000000000000)
         },
-        "Bank": {
-            "No of withdrawals": 0,
-            "No of deposits": 0,
-            "No of transactions": 0,
-            "Withdrawals": [],
-            "Deposits": [],
-            "Transactions": [],
-            "Total withdrawn": 0,
-            "Total deposited": 0,
-            "Total sent": 0,
-        },
+        "No of withdrawals": 0,
+        "No of deposits": 0,
+        "No of transactions": 0,
+        "Withdrawals": [],
+        "Deposits": [],
+        "Transactions": [],
+        "Total withdrawn": 0,
+        "Total deposited": 0,
+        "Total sent": 0,
         "PIN": "106578",
         "Demat": {},
         "Name": (
@@ -720,11 +718,9 @@ def bankManagement():
                 withdrawal = withDraw(
                     withdrawalName, amountWithdrawn, random.randint(1000, 1000000000)
                 )
-                st.session_state.userDict["Bank"]["Withdrawals"].append(
-                    withdrawal.dict()
-                )
-                st.session_state.userDict["Bank"]["No of withdrawals"] += 1
-                st.session_state.userDict["Bank"]["Total withdrawn"] += amountWithdrawn
+                st.session_state.userDict["Withdrawals"].append(withdrawal.dict())
+                st.session_state.userDict["No of withdrawals"] += 1
+                st.session_state.userDict["Total withdrawn"] += amountWithdrawn
                 st.session_state.userDict["Bank account"]["Balance"] -= amountWithdrawn
                 withdrawal.celebrate()
             else:
@@ -752,12 +748,10 @@ def bankManagement():
                         random.randint(1000, 1000000000),
                         receiver,
                     )
-                    st.session_state.userDict["Bank"]["Transactions"].append(
-                        transaction.dict()
-                    )
+                    st.session_state.userDict["Transactions"].append(transaction.dict())
                     st.session_state.userDict["Bank account"]["Balance"] -= amountSent
-                    st.session_state.userDict["Bank"]["Total sent"] += amountSent
-                    st.session_state.userDict["Bank"]["No of transactions"] += 1
+                    st.session_state.userDict["Total sent"] += amountSent
+                    st.session_state.userDict["No of transactions"] += 1
                     withdrawal.celebrate()
                 else:
                     st.error("Enter a new PIN. The submitted PIN is wrong.")
@@ -779,10 +773,10 @@ def bankManagement():
                 dep = deposit(
                     depositName, amountDeposited, random.randint(1000, 1000000000)
                 )
-                st.session_state.userDict["Bank"]["Deposits"].append(dep.dict())
+                st.session_state.userDict["Deposits"].append(dep.dict())
                 st.session_state.userDict["Bank account"]["Balance"] += amountDeposited
-                st.session_state.userDict["Bank"]["Total deposited"] += amountDeposited
-                st.session_state.userDict["Bank"]["No of deposits"] += 1
+                st.session_state.userDict["Total deposited"] += amountDeposited
+                st.session_state.userDict["No of deposits"] += 1
                 dep.celebrate()
             else:
                 st.error("Enter a new PIN. The submitted PIN is wrong.")
@@ -799,38 +793,38 @@ def bankManagement():
                 with st.expander("No of deposits"):
                     st.metric(
                         "No of deposits",
-                        f"{st.session_state.userDict["Bank"]["No of deposits"]}",
+                        f"{st.session_state.userDict["No of deposits"]}",
                     )
                 st.divider()
                 with st.expander("No of withdrawals"):
                     st.metric(
                         "No of withdrawals",
-                        f"{st.session_state.userDict["Bank"]["No of withdrawals"]}",
+                        f"{st.session_state.userDict["No of withdrawals"]}",
                     )
                 st.divider()
                 with st.expander("No of transactions"):
                     st.metric(
                         "No of transactions",
-                        f"{st.session_state.userDict["Bank"]["No of transactions"]}",
+                        f"{st.session_state.userDict["No of transactions"]}",
                     )
                 st.divider()
             with c2:
                 with st.expander("Total withdrawn"):
                     st.metric(
                         "Total withdrawn",
-                        f"{st.session_state.userDict["Bank"]["Total withdrawn"]} INR",
+                        f"{st.session_state.userDict["Total withdrawn"]} INR",
                     )
                 st.divider()
                 with st.expander("Total deposited"):
                     st.metric(
                         "Total deposited",
-                        f"{st.session_state.userDict["Bank"]["Total deposited"]} INR",
+                        f"{st.session_state.userDict["Total deposited"]} INR",
                     )
                 st.divider()
                 with st.expander("Total sent"):
                     st.metric(
                         "Total sent",
-                        f"{st.session_state.userDict["Bank"]["Total sent"]} INR",
+                        f"{st.session_state.userDict["Total sent"]} INR",
                     )
                 st.divider()
         with st.container(border=True):
@@ -838,19 +832,15 @@ def bankManagement():
             with c1:
                 st.subheader("Withdrawals")
                 st.divider()
-                withdrawDf = pd.DataFrame(
-                    st.session_state.userDict["Bank"]["Withdrawals"]
-                )
+                withdrawDf = pd.DataFrame(st.session_state.userDict["Withdrawals"])
                 st.dataframe(withdrawDf, hide_index=True)
                 st.divider()
             with c1:
-                transactionsDf = pd.DataFrame(
-                    st.session_state.userDict["Bank"]["Transactions"]
-                )
+                transactionsDf = pd.DataFrame(st.session_state.userDict["Transactions"])
                 st.dataframe(transactionsDf, hide_index=True)
                 st.divider()
             with c1:
-                depositDf = pd.DataFrame(st.session_state.userDict["Bank"]["Deposits"])
+                depositDf = pd.DataFrame(st.session_state.userDict["Deposits"])
                 st.dataframe(depositDf, hide_index=True)
                 st.divider()
 
