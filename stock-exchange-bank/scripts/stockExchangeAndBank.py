@@ -716,7 +716,8 @@ def bankManagement():
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
                 step=1.0,
             )
-        if withdrawalName and pin and amountWithdrawn:
+            withConf = st.button("Confirm withdrawal?")
+        if withConf:
             if pin == st.session_state.userDict["PIN"]:
                 withdrawal = withDraw(
                     withdrawalName, amountWithdrawn, random.randint(1000, 1000000000)
@@ -743,7 +744,8 @@ def bankManagement():
                 step=1.0,
             )
             receiver = st.selectbox("Who do you want to send the money to?", names)
-            if transactionName and pinTra and amountSent:
+            transactionConf = st.button("Confirm transaction")
+            if transactionConf:
                 if pinTra == st.session_state.userDict["PIN"]:
                     withdrawal = transaction(
                         withdrawalName,
@@ -770,8 +772,9 @@ def bankManagement():
                 max_value=st.session_state.userDict["Bank account"]["Balance"],
                 step=1.0,
             )
+            depConf = st.button("Confirm deposit?")
 
-        if depositName and pin and amountDeposited:
+        if depConf:
             if pinDep == st.session_state.userDict["PIN"]:
                 dep = deposit(
                     depositName, amountDeposited, random.randint(1000, 1000000000)
@@ -814,8 +817,8 @@ def bankManagement():
             with c2:
                 if (
                     len(st.session_state.userDict["Transactions"]) != 0
-                    and st.session_state.userDict["Withdrawals"] != 0
-                    and st.session_state.userDict["Deposits"] != 0
+                    and len(st.session_state.userDict["Withdrawals"]) != 0
+                    and len(st.session_state.userDict["Deposits"]) != 0
                 ):
                     with st.expander("Total withdrawn"):
                         st.metric(
@@ -837,8 +840,8 @@ def bankManagement():
                     st.divider()
         if (
             len(st.session_state.userDict["Transactions"]) != 0
-            and st.session_state.userDict["Withdrawals"] != 0
-            and st.session_state.userDict["Deposits"] != 0
+            and len(st.session_state.userDict["Withdrawals"]) != 0
+            and len(st.session_state.userDict["Deposits"]) != 0
         ):
             with st.container(border=True):
                 c1, c2, c3 = st.columns(3, border=True)
