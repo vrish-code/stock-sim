@@ -919,7 +919,7 @@ with st.sidebar:
         selectedTimeZone = st.selectbox("Select your timezone", timeZones)
         if selectedTimeZone:
             while True:
-                now = datetime.strftime(ZoneInfo(selectedTimeZone))
+                now = datetime.now(ZoneInfo(selectedTimeZone))
                 if now.hour < 12:
                     st.badge("Good morning", icon="☀️", color="yellow")
                 elif now.hour == 12:
