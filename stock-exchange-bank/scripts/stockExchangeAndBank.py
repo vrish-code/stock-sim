@@ -466,7 +466,7 @@ def portfolioAndSelling():
                                             i
                                         ].items(),
                                     ),
-                                    columns=['Categories", "Details'],
+                                    columns=["Categories", "Details"],
                                 )
                                 st.dataframe(bSDf, hide_index=True)
                 with t4:
