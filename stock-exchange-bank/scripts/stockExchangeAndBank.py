@@ -668,7 +668,7 @@ def bankManagement():
         def __init__(self, name: str, amount: float, depositNo: int):
             self.name = name
             self.amount = amount
-            self.withdrawalNo = depositNo
+            self.depositNo = depositNo
 
         def dict(self):
             return {
