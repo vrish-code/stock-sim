@@ -791,56 +791,53 @@ def bankManagement():
                 st.error("Enter a new PIN. The submitted PIN is wrong.")
     with st.container(border=True):
         with st.container(border=True):
-            c1, c2 = st.columns(2, border=True)
-            with c1:
-                with st.expander("Bank account balance"):
+            with st.expander("Bank account balance"):
+                st.metric(
+                    "Bank account balance",
+                    f"{st.session_state.userDict['Bank account']['Balance']} INR",
+                )
+            st.divider()
+            with st.expander("No of deposits"):
+                st.metric(
+                    "No of deposits",
+                    f"{st.session_state.userDict['No of deposits']}",
+                )
+            st.divider()
+            with st.expander("No of withdrawals"):
+                st.metric(
+                    "No of withdrawals",
+                    f"{st.session_state.userDict['No of withdrawals']}",
+                )
+            st.divider()
+            with st.expander("No of transactions"):
+                st.metric(
+                    "No of transactions",
+                    f"{st.session_state.userDict['No of transactions']}",
+                )
+            st.divider()
+            if (
+                len(st.session_state.userDict["Transactions"]) != 0
+                or len(st.session_state.userDict["Withdrawals"]) != 0
+                or len(st.session_state.userDict["Deposits"]) != 0
+            ):
+                with st.expander("Total withdrawn"):
                     st.metric(
-                        "Bank account balance",
-                        f"{st.session_state.userDict['Bank account']['Balance']} INR",
+                        "Total withdrawn",
+                        f"{st.session_state.userDict['Total withdrawn']} INR",
                     )
                 st.divider()
-                with st.expander("No of deposits"):
+                with st.expander("Total deposited"):
                     st.metric(
-                        "No of deposits",
-                        f"{st.session_state.userDict['No of deposits']}",
+                        "Total deposited",
+                        f"{st.session_state.userDict['Total deposited']} INR",
                     )
                 st.divider()
-                with st.expander("No of withdrawals"):
+                with st.expander("Total sent"):
                     st.metric(
-                        "No of withdrawals",
-                        f"{st.session_state.userDict['No of withdrawals']}",
+                        "Total sent",
+                        f"{st.session_state.userDict['Total sent']} INR",
                     )
                 st.divider()
-                with st.expander("No of transactions"):
-                    st.metric(
-                        "No of transactions",
-                        f"{st.session_state.userDict['No of transactions']}",
-                    )
-                st.divider()
-            with c2:
-                if (
-                    len(st.session_state.userDict["Transactions"]) != 0
-                    or len(st.session_state.userDict["Withdrawals"]) != 0
-                    or len(st.session_state.userDict["Deposits"]) != 0
-                ):
-                    with st.expander("Total withdrawn"):
-                        st.metric(
-                            "Total withdrawn",
-                            f"{st.session_state.userDict['Total withdrawn']} INR",
-                        )
-                    st.divider()
-                    with st.expander("Total deposited"):
-                        st.metric(
-                            "Total deposited",
-                            f"{st.session_state.userDict['Total deposited']} INR",
-                        )
-                    st.divider()
-                    with st.expander("Total sent"):
-                        st.metric(
-                            "Total sent",
-                            f"{st.session_state.userDict['Total sent']} INR",
-                        )
-                    st.divider()
         if (
             len(st.session_state.userDict["Transactions"]) != 0
             or len(st.session_state.userDict["Withdrawals"]) != 0
