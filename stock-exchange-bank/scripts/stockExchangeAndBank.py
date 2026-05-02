@@ -663,7 +663,7 @@ def bankManagement():
             }
 
         def celebrate(self):
-            st.success("Withdrawal successful!")
+            st.toast("Withdrawal successful!", icon="✅")
 
     class deposit:
         def __init__(self, name: str, amount: float, depositNo: int):
@@ -679,7 +679,7 @@ def bankManagement():
             }
 
         def celebrate(self):
-            st.success("Deposit successful!")
+            st.toast("Deposit successful!", icon="✅")
 
     class transaction:
         def __init__(self, name: str, amount: float, transactionNo: int, receiver: str):
@@ -697,7 +697,7 @@ def bankManagement():
             }
 
         def celebrate(self):
-            st.success("Transaction successful!")
+            st.toast("Transaction successful!", icon="✅")
 
     st.subheader("Manage your bank account")
     st.badge("New feature!", icon="🆕", color="green")
@@ -760,7 +760,7 @@ def bankManagement():
                     st.session_state.userDict["Bank account"]["Balance"] -= amountSent
                     st.session_state.userDict["Total sent"] += amountSent
                     st.session_state.userDict["No of transactions"] += 1
-                    withdrawal.celebrate()
+                    transactionDictSingle.celebrate()
                 else:
                     st.error("Enter a new PIN. The submitted PIN is wrong.")
     with c3:
