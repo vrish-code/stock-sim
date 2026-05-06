@@ -221,7 +221,7 @@ if "availableStocks" not in st.session_state:
         },
     }
 
-if "stock_df" not in st.session_state:
+if "stockDfif" not in st.session_state:
     avStocksCopy=c.deepcopy(st.session_state.availableStocks)
     for x in avStocksCopy:
         month6HistCopy=pd.DataFrame(st.session_state.availableStocks[x]["6 month history"])
