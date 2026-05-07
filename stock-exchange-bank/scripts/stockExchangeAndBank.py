@@ -126,99 +126,82 @@ if "userDict" not in st.session_state:
     }
 
 if "availableStocks" not in st.session_state:
-    monthsUnordered = ["January", "February", "March", "April", "May", "June"]
-    months = pd.Categorical(
-        monthsUnordered,
-        categories=monthsUnordered,
-        ordered=True,
-    )
+    
     st.session_state.availableStocks = {
         "RELIANCE": {
             "Name": "Reliance Industries Limited",
             "Price (1 share)": 2985.40 + random.randint(100, 100000),
             "Return Percentage 1 yr": 18.50 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
+            "6 month history": 
                 [2450.5, 2580.2, 2710.8, 2840.4, 2920.1, 2985.4],
-                index=months,
-            ),
+            
         },
         "HDFCBANK": {
             "Name": "HDFC Bank Limited",
             "Price (1 share)": 1642.15 - random.randint(100, 100000),
             "Return Percentage 1 yr": 4.25 + random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
-                [1520.0, 1480.4, 1550.6, 1610.3, 1630.8, 1642.15],
-                index=months,
-            ),
+            "6 month history": 
+                [1520.0, 1480.4, 1550.6, 1610.3, 1630.8, 1642.15]
         },
         "TCS": {
             "Name": "Tata Consultancy Services Limited",
             "Price (1 share)": 3950.60 + random.randint(100, 100000),
             "Return Percentage 1 yr": 15.41 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
+            "6 month history": 
                 [3410.2, 3550.5, 3680.1, 3820.9, 3910.4, 3950.6],
-                index=months,
-            ),
+                
         },
         "ICICIBANK": {
             "Name": "ICICI Bank Limited",
             "Price (1 share)": 1125.40 - random.randint(100, 100000),
             "Return Percentage 1 yr": 22.20 + random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
+            "6 month history": 
                 [950.4, 990.8, 1040.2, 1080.6, 1110.1, 1125.4],
-                index=months,
-            ),
+                
         },
         "INFY": {
             "Name": "Infosys Limited",
             "Price (1 share)": 1545.90 + random.randint(100, 100000),
             "Return Percentage 1 yr": 12.40 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
+            "6 month history":
                 [1380.1, 1420.4, 1460.7, 1490.3, 1520.9, 1545.9],
-                index=months,
-            ),
+               
         },
         "BHARTIARTL": {
             "Name": "Bharti Airtel Limited",
             "Price (1 share)": 1420.10 + random.randint(100, 100000),
             "Return Percentage 1 yr": 65.10 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
+            "6 month history": 
                 [880.2, 950.5, 1100.1, 1250.9, 1380.4, 1420.1],
-                index=months,
-            ),
+                
         },
         "SBIN": {
             "Name": "State Bank of India",
             "Price (1 share)": 785.00 - random.randint(100, 100000),
             "Return Percentage 1 yr": 35.40 + random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
-                [580.5, 620.2, 680.8, 720.4, 760.1, 785.0], index=months
-            ),
+            "6 month history": 
+                [580.5, 620.2, 680.8, 720.4, 760.1, 785.0]
         },
         "LICI": {
             "Name": "Life Insurance Corporation of India",
             "Price (1 share)": 1015.45 + random.randint(100, 100000),
             "Return Percentage 1 yr": 72.86 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
-                [610.1, 680.4, 820.1, 940.5, 990.3, 1015.45], index=months
-            ),
+            "6 month history": 
+                [610.1, 680.4, 820.1, 940.5, 990.3, 1015.45]
         },
         "ITC": {
             "Name": "ITC Limited",
             "Price (1 share)": 435.65 + random.randint(100, 100000),
             "Return Percentage 1 yr": 5.77 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
-                [410.8, 425.4, 440.1, 455.6, 442.2, 435.65], index=months
-            ),
+            "6 month history":
+                [410.8, 425.4, 440.1, 455.6, 442.2, 435.65]
         },
         "MARUTI": {
             "Name": "Maruti Suzuki India Limited",
             "Price (1 share)": 12500.00 + random.randint(100, 100000),
             "Return Percentage 1 yr": 32.15 - random.randint(-10, 10),
-            "6 month history": pd.DataFrame(
-                [9500.0, 10200.5, 11000.2, 11800.8, 12200.1, 12500.0], index=months
-            ),
-        },
+            "6 month history":
+                [9500.0, 10200.5, 11000.2, 11800.8, 12200.1, 12500.0]}
     }
 
 if "stock_df" not in st.session_state:
